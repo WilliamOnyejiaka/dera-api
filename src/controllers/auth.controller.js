@@ -11,6 +11,7 @@ import Token from '../models/token.model.js'
 import crypto from 'crypto'
 import dotenv from 'dotenv'
 import Password from '../utils/Password.js'
+import Email from '../utils/Email.js'
 
 dotenv.config()
 
@@ -37,8 +38,19 @@ export const register = async (req, res, next) => {
       token: crypto.randomBytes(32).toString('hex')
     })
 
-    const msg = signUpTemplate(verifyLink, user.id, token.token)
-    sendMail(user.email, msg, 'Welcome to Dera Express')
+    // const msg = signUpTemplate(verifyLink, user.id, token.token)
+    const email = new Email();
+    // sendMail(user.email, msg, 'Welcome to Dera Express')
+    const template = await email.getEmailTemplate({
+      verifyLink,
+      token: token.token,
+      user: user.id,
+      date: new Date().getFullYear()
+    });
+    const result = await email.sendEmail('dera-logistics', user.email, 'Welcome to Dera Express', template);
+
+    console.log(result);
+    
 
     return res.status(201).json({
       success: true,

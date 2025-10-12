@@ -18,6 +18,8 @@ db()
 const resend = new Resend(process.env.RESEND_API_KEY)
 const PORT = process.env.PORT || 6000
 const app = express()
+app.use(express.urlencoded({ extended: true }));
+
 app.use(morgan('combined'))
 app.use(express.json())
 // app.use(cors({ origin: '*' }))
@@ -25,7 +27,7 @@ app.use(cors())
 
 cron.schedule('*/10 * * * *', async () => {
   const response = await axios.get('https://dera-api.onrender.com/api/v1/ping')
-  console.log(response.data)
+  // console.log(response.data)
 })
 
 //routes
