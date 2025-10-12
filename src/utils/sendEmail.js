@@ -9,8 +9,8 @@ const sendMail = (to, msg, subject) => {
     port: 465,
     secure: true,
     auth: {
-      user: process.env.HOST_EMAIL,
-      pass: process.env.SMTP_PASS
+      user: "ubachukwusylvester8@gmail.com",
+      pass: process.env.SMTP_PASSWORD
     }
   })
 
