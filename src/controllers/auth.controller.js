@@ -31,23 +31,23 @@ export const register = async (req, res, next) => {
   }
 
   try {
-    const user = await User.create(value)
+    // const user = await User.create(value)
 
-    const token = await Token.create({
-      userId: user._id,
-      token: crypto.randomBytes(32).toString('hex')
-    })
+    // const token = await Token.create({
+    //   userId: user._id,
+    //   token: crypto.randomBytes(32).toString('hex')
+    // })
 
     // const msg = signUpTemplate(verifyLink, user.id, token.token)
     const email = new Email();
     // sendMail(user.email, msg, 'Welcome to Dera Express')
     const template = await email.getEmailTemplate({
       verifyLink,
-      token: token.token,
-      user: user.id,
+      token: "token.token",
+      user: "user.id",
       date: new Date().getFullYear()
     });
-    const result = await email.sendEmail('dera-logistics', user.email, 'Welcome to Dera Express', template);
+    const result = await email.sendEmail('dera-logistics', "williamonyejiaka2021@gmail.com", 'Welcome to Dera Express', template);
 
     console.log(result);
     
