@@ -17,12 +17,20 @@ export default class Email {
     constructor() {
         this.transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465,
-            secure: true, // Use TLS
+            port: 587,
+            secure: false, // Use TLS
             auth: {
                 user: "ubachukwusylvester8@gmail.com",
                 pass: process.env.SMTP_PASSWORD
             },
+        });
+
+        this.transporter.verify((error, success) => {
+            if (error) {
+                console.error('SMTP Verification Error:', error);
+            } else {
+                console.log('SMTP Server is ready to take messages');
+            }
         });
     }
 
