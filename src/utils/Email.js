@@ -26,7 +26,7 @@ export default class Email {
                 // user: 'mirordev@gmail.com',
                 user: "wonder",
                 // pass: process.env.MAIL_CHIMP
-                pass: "md-ZxdkdGXI5NNKVokTyZ4DLQ"
+                pass: "mirordev@gmail.com"
             },
         });
     }
