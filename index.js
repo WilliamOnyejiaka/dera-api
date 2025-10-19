@@ -27,13 +27,19 @@ app.use(cors())
 //routes
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/bookings', verifyJWT(["user"]), bookingsRouter);
-app.use('/api/v1/user', verifyJWT(["user"]), userRouter)
+app.use('/api/v1/user', verifyJWT(["user"]), userRouter);
+
+app.get('/api/v1/ping', (req, res) => {
+  res.status(200).json({
+    error: false,
+    message: "Pinging host"
+  })
+});
 
 
-app.get('/', (_, res) => {
+app.get('/api/v1/ping', (_, res) => {
   res.send('welcome')
-})
-
+});
 
 app.use(errorHandler);
 
@@ -47,6 +53,6 @@ app.listen(PORT, () => {
 });
 
 cron.schedule('*/10 * * * *', async () => {
-  // const response = await axios.get('https://dera-api.onrender.com/api/v1/ping')
-  // console.log(response.data)
+  const response = await axios.get('https://dera-api-age1.onrender.com/api/v1/ping')
+  console.log(response.data)
 })
