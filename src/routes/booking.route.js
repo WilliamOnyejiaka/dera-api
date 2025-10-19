@@ -1,13 +1,15 @@
 import express from 'express'
 import { body, param, query } from 'express-validator'
 import {
-  createBooking,
-  getBookings,
+  book,
+  bookings,
   getBooking,
   updateBooking,
   cancelBooking
 } from '../controllers/booking.controller.js'
-import { authMiddleware } from '../middleware/authMiddleware.js'
+import { authMiddleware } from '../middlewares/authMiddleware.js'
+import asyncHandler from "express-async-handler";
+
 
 const router = express.Router()
 
@@ -50,13 +52,8 @@ const locationValidator = (prefix = '') => [
     .trim()
 ]
 
-/* -----------------------------------------------
-   Create Booking
-   POST /api/bookings
------------------------------------------------ */
 router.post(
   '/',
-  authMiddleware,
   [
     body('fullNameOrBusiness')
       .exists()
@@ -98,38 +95,25 @@ router.post(
     body('estimatedDeliveryDate').optional().isISO8601(),
     body('notes').optional().isString().trim()
   ],
-  createBooking
+  asyncHandler(book)
 )
 
-/* -----------------------------------------------
-   Get Bookings (Admin/List)
-   GET /api/bookings
------------------------------------------------ */
 router.get(
   '/',
-  authMiddleware,
   [
     query('page').optional().isInt({ min: 1 }),
     query('limit').optional().isInt({ min: 1 }),
     query('status').optional().isString(),
     query('search').optional().isString()
   ],
-  getBookings
-)
+  asyncHandler(bookings)
+);
 
-/* -----------------------------------------------
-   Get Single Booking
-   GET /api/bookings/:id
------------------------------------------------ */
-router.get('/:id', authMiddleware, [param('id').isMongoId()], getBooking)
+router.get('/:id', [param('id').isMongoId()], getBooking)
 
-/* -----------------------------------------------
-   Update Booking (Partial)
-   PATCH /api/bookings/:id
------------------------------------------------ */
+
 router.patch(
   '/:id',
-  authMiddleware,
   [
     param('id').isMongoId(),
 
@@ -151,13 +135,9 @@ router.patch(
     body('status').optional().isString().trim(), // No enum restriction
     body('notes').optional().isString().trim()
   ],
-  updateBooking
-)
+  asyncHandler(updateBooking)
+);
 
-/* -----------------------------------------------
-   Cancel Booking
-   DELETE /api/bookings/:id
------------------------------------------------ */
-router.delete('/:id', authMiddleware, [param('id').isMongoId()], cancelBooking)
+router.patch('/cancel/:id', [param('id').isMongoId()], asyncHandler(cancelBooking))
 
 export default router

@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Password from '../utils/Password.js'
+import Password from '../utils/Password.util.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -47,13 +47,12 @@ const UserSchema = new Schema(
   { timestamps: true }
 )
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
+// UserSchema.pre('save', async function (next) {
+//   if (!this.isModified('password')) return next()
 
-  // const hashedPassword = await hash(this.password)
-  const hashedPassword = Password.hashPassword(this.password, process.env.STORED_SALT)
-  this.password = hashedPassword
-  next()
-})
+//   const hashedPassword = Password.hashPassword(this.password, process.env.STORED_SALT)
+//   this.password = hashedPassword
+//   next()
+// })
 
 export default model('User', UserSchema)

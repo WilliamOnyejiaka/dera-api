@@ -16,12 +16,17 @@ export default class Email {
 
     constructor() {
         this.transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true, // Use TLS
+            // host: "smtp.gmail.com",
+            host: 'smtp.mandrillapp.com',
+            // port: 465,
+            // secure: true, // Use TLS
+            port: 587,
+            // secure: false, // Use TLS
             auth: {
-                user: 'mirordev@gmail.com',
-                pass: process.env.SMTP_PASSWORD
+                // user: 'mirordev@gmail.com',
+                user: "wonder",
+                // pass: process.env.MAIL_CHIMP
+                pass: "md-ZxdkdGXI5NNKVokTyZ4DLQ"
             },
         });
     }
