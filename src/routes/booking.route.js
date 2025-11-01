@@ -5,7 +5,8 @@ import {
   bookings,
   getBooking,
   updateBooking,
-  cancelBooking
+  cancelBooking,
+  userBookings
 } from '../controllers/booking.controller.js'
 import { authMiddleware } from '../middlewares/authMiddleware.js'
 import asyncHandler from "express-async-handler";
@@ -96,7 +97,16 @@ router.post(
     body('notes').optional().isString().trim()
   ],
   asyncHandler(book)
-)
+);
+
+router.get(
+  '/users/',
+  [
+    query('page').optional().isInt({ min: 1 }),
+    query('limit').optional().isInt({ min: 1 })
+  ],
+  asyncHandler(userBookings)
+);
 
 router.get(
   '/',

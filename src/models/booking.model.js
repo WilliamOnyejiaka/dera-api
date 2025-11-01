@@ -46,7 +46,7 @@ const BookingSchema = new Schema(
     tempControlCelsius: {
       type: Number,
       validate: {
-        validator (v) {
+        validator(v) {
           if (v === null || typeof v === 'undefined') return true
           return Number.isFinite(v)
         },
@@ -62,7 +62,12 @@ const BookingSchema = new Schema(
     status: { type: String, default: 'pending', trim: true }, // flexible — client can set custom statuses
 
     notes: { type: String, trim: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true
+    }
   },
   {
     timestamps: true

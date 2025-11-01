@@ -35,6 +35,31 @@ export default class Booking extends BaseService {
 
     }
 
+    async userBookings(page, limit, userId) {
+        try {
+            const skip = (page - 1) * limit;
+            const query = { createdBy: userId }
+            const [total, bookings] = await Promise.all([
+                BookingModel.countDocuments(query),
+                BookingModel.find(query)
+                    .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limit)
+                    .lean()
+            ]);
+
+            const data = {
+                records: bookings,
+                pagination: { ...pagination(page, limit, total) }
+            };
+
+            return this.responseData(200, false, "Bookings were retrieved successfully", data);
+        } catch (error) {
+            const { statusCode, message } = this.handleMongoError(error);
+            return this.responseData(statusCode, true, message);
+        }
+    }
+
     async bookings(page, limit, status, search) {
         try {
             const query = {};

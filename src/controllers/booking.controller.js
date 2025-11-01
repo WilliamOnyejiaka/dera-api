@@ -40,6 +40,16 @@ export const bookings = async (req, res) => {
   Controller.response(res, serviceResult);
 }
 
+export const userBookings = async (req, res) => {
+  const { id: userId } = res.locals.data;
+
+  const { page = 1, limit = 20 } = req.query
+
+  const serviceResult = await service.userBookings(page, limit, userId);
+  Controller.response(res, serviceResult);
+}
+
+
 export const getBooking = async (req, res) => {
   const { id } = req.params
 
