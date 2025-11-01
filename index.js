@@ -21,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan('combined'))
 app.use(express.json())
-// app.use(cors({ origin: '*' }))
-app.use(cors())
+app.use(cors({ origin: '*' }))
+// app.use(cors())
 
 //routes
 app.use('/api/v1/auth', authRouter)
@@ -53,6 +53,6 @@ app.listen(PORT, () => {
 });
 
 cron.schedule('*/10 * * * *', async () => {
-  const response = await axios.get('https://dera-api-age1.onrender.com/api/v1/ping')
+  const response = await axios.get('https://dera-api-jqko.onrender.com/api/v1/ping')
   console.log(response.data)
 })
