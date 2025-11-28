@@ -16,30 +16,29 @@ export default class Email {
 
     constructor() {
         this.transporter = nodemailer.createTransport({
-            // host: "smtp.gmail.com",
-            host: 'smtp.mandrillapp.com',
-            // port: 465,
-            // secure: true, // Use TLS
-            port: 587,
-            // secure: false, // Use TLS
+            host: 'mail.privateemail.com',
+            port: 465,
+            secure: true,
             auth: {
-                // user: 'mirordev@gmail.com',
-                user: "wonder",
-                // pass: process.env.MAIL_CHIMP
-                pass: "mirordev@gmail.com"
+                user: 'kelvin@daraexpress.com',      // ✅ full mailbox
+                pass: 'Dara2025@!'               // ✅ correct mailbox password
             },
+            connectionTimeout: 10_000,
+            greetingTimeout: 10_000,
+            socketTimeout: 10_000,
         });
     }
 
-    async getEmailTemplate(data, templatePath = path.join(__dirname, './../views', "email.ejs")) {
-        const htmlContent = await ejs.renderFile(templatePath, data);
+    async getEmailTemplate(data, templateName = "email.ejs") {
+        let fullPath = path.join(__dirname, './../views', templateName)
+        const htmlContent = await ejs.renderFile(fullPath, data);
         return htmlContent;
     }
 
     async sendEmail(from, to, subject, html) {
 
         const mailOptions = {
-            from: from,
+            from: `"DARA Express" <${from}>`,
             to: to,
             subject: subject,
             html: html

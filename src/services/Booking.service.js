@@ -1,7 +1,24 @@
 import BaseService from "./bases/BaseService.service.js";
 import UserModel from "./../models/user.model.js ";
 import BookingModel from '../models/booking.model.js';
+import PaymentModel from '../models/payment.model.js';
+
 import pagination from "./../utils/pagination.js";
+import bree from "./../config/bree.js";
+
+const CityKm = {
+    'Abuja': 752,
+    'Warri': 445,
+    'Benin City': 322,
+    'Enugu': 567,
+    'Port Harcourt': 627
+};
+
+const TruckSizeCost = {
+    5: 1500,
+    10: 2000,
+    15: 2500
+};
 
 
 export default class Booking extends BaseService {
@@ -22,17 +39,44 @@ export default class Booking extends BaseService {
             const user = await UserModel.findById(userId)
             if (!user) return this.responseData(404, true, "User was not found");
 
+            const city = payload.dropoffLocation.city;
+            const truckSize = payload.truckSize;
+
+            const km = CityKm[city];
+            const cost = TruckSizeCost[truckSize];
+
+            const amount = km * cost;
+
             const booking = await BookingModel.create({
                 ...payload,
+                amount,
                 createdBy: userId
             });
+
+            const name = `send-email-${Date.now()}`;
+
+            await bree.add({
+                name: name,
+                path: './src/jobs/send-email.js',
+                worker: {
+                    workerData: {
+                        to: "williamonyejiaka2021@gmail.com",
+                        subject: "New Booking",
+                        body: { booking: { ...booking.toJSON(), createdBy: userId } },
+                        templatePath: 'booking.ejs'
+                    }
+                }
+            });
+
+            // Run job once
+            await bree.start(name);
+
             return this.responseData(200, false, 'Booking created successfully', booking)
 
         } catch (error) {
             const { statusCode, message } = this.handleMongoError(error);
             return this.responseData(statusCode, true, message);
         }
-
     }
 
     async userBookings(page, limit, userId) {

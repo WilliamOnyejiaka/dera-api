@@ -1,0 +1,7 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/mtrsixlq/dera-api.daraexpress.com"
+PassengerBaseURI "/"
+PassengerNodejs "/home/mtrsixlq/nodevenv/dera-api.daraexpress.com/20/bin/node"
+PassengerAppType node
+PassengerStartupFile index.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END

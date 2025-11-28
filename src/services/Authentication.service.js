@@ -2,7 +2,11 @@ import Token from "./Token.service.js";
 import User from '../models/user.model.js'
 import BaseService from './bases/BaseService.service.js';
 import Password from "../utils/Password.util.js";
-import { STORED_SALT, JWT_SECRET } from "./../config/env.js";
+import { STORED_SALT, JWT_SECRET, BASE_URL } from "./../config/env.js";
+import logger from "../config/logger.js";
+import bree from "./../config/bree.js";
+import tokenModel from "../models/token.model.js";
+
 
 export default class Authentication extends BaseService {
 
@@ -30,8 +34,25 @@ export default class Authentication extends BaseService {
             const token = this.generateUserToken({ id: user._id }, "user");
             user.password = undefined;
             const data = { user, token };
+
+            const name = `send-verification-email-${Date.now()}`;
+
+            await bree.add({
+                name: name,
+                path: './src/jobs/send-verification-email.js',
+                worker: {
+                    workerData: {
+                        email: user.email,
+                        userId: user._id.toString()
+                    }
+                }
+            });
+
+            // Run job once
+            await bree.start(name);
             return this.responseData(201, false, "User has been created successfully", data);
         } catch (error) {
+            logger.error(error);
             const { statusCode, message } = this.handleMongoError(error);
             return this.responseData(statusCode, true, message);
         }
@@ -51,8 +72,33 @@ export default class Authentication extends BaseService {
             const data = { user, token };
             return this.responseData(200, false, 'User logged in successfully', data);
         } catch (error) {
+            logger.error(error);
             const { statusCode, message } = this.handleMongoError(error);
             return this.responseData(statusCode, true, message);
         }
     }
+
+    async verifyEmail(userId, userToken) {
+        try {
+            const user = await User.findOne({ _id: userId })
+
+            if (!user) return this.responseData(404, true, "User was not found");
+
+            const token = await tokenModel.findOne({
+                userId: user.id,
+                token: userToken
+            })
+
+            if (!token) return this.responseData(400, true, 'Invalid token');
+
+            await user.updateOne({ verified: true })
+            await token.deleteOne();
+
+            return this.responseData(200, false, 'https://daraexpress.com/auth/login');
+        } catch (error) {
+            const { statusCode, message } = this.handleMongoError(error);
+            return this.responseData(statusCode, true, message);
+        }
+    }
+
 }

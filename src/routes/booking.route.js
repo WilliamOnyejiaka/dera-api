@@ -33,7 +33,9 @@ const contactValidator = (prefix = '') => [
     .isEmail()
     .withMessage(`${prefix}.email must be valid`)
     .trim()
-]
+];
+
+const allowedCities = ['Abuja', 'Warri', 'Benin City', 'Enugu', 'Port Harcourt'];
 
 const locationValidator = (prefix = '') => [
   body(`${prefix}.address`)
@@ -45,13 +47,14 @@ const locationValidator = (prefix = '') => [
     .exists()
     .withMessage(`${prefix}.city is required`)
     .isString()
-    .trim(),
-  body(`${prefix}.state`)
-    .exists()
-    .withMessage(`${prefix}.state is required`)
-    .isString()
     .trim()
-]
+    .custom(value => {
+      if (!allowedCities.includes(value)) {
+        throw new Error(`${prefix}.city must be one of: ${allowedCities.join(', ')}`);
+      }
+      return true;
+    }),
+];
 
 router.post(
   '/',
@@ -72,10 +75,13 @@ router.post(
       .withMessage('Customer type is required')
       .isString()
       .trim(),
+    body('pickupLocation')
+      .exists()
+      .withMessage('pickup location is required')
+      .isString(),
 
     ...contactValidator('pickupPerson'),
     ...contactValidator('receiverPerson'),
-    ...locationValidator('pickupLocation'),
     ...locationValidator('dropoffLocation'),
 
     body('goodsType')
@@ -94,7 +100,12 @@ router.post(
     body('vehicleType').optional().isString(),
     body('estimatedPickupDate').optional().isISO8601(),
     body('estimatedDeliveryDate').optional().isISO8601(),
-    body('notes').optional().isString().trim()
+    body('notes').optional().isString().trim(),
+
+    body('truckSize').isInt() // ensures it's an integer
+      .withMessage('truckSize Must be a number')
+      .isIn([5, 10, 15])
+      .withMessage('truckSize must be 5, 10, or 15')
   ],
   asyncHandler(book)
 );

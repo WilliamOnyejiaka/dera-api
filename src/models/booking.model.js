@@ -7,7 +7,7 @@ const LocationSchema = new Schema(
   {
     address: { type: String, required: true, trim: true },
     city: { type: String, required: true, trim: true },
-    state: { type: String, required: true, trim: true }
+    // state: { type: String, required: true, trim: true }
   },
   { _id: false }
 )
@@ -34,7 +34,7 @@ const BookingSchema = new Schema(
     receiverPerson: { type: ContactSchema, required: true },
 
     // Movement details
-    pickupLocation: { type: LocationSchema, required: true },
+    pickupLocation: { type: String, required: true },
     dropoffLocation: { type: LocationSchema, required: true },
 
     // Goods specification
@@ -67,6 +67,18 @@ const BookingSchema = new Schema(
       ref: 'User',
       required: true,
       index: true
+    },
+
+    truckSize: {
+      type: Number,
+      required: true,
+      enum: [5, 10, 15], // only allows these values
+      message: '{VALUE} is not a valid truck size'
+    },
+
+    amount: {
+      type: Number,
+      required: true,
     }
   },
   {

@@ -1,5 +1,6 @@
 const login = async () => {
-    const url = "https://dera-api-jqko.onrender.com/api/v1/auth/login";
+    // const url = "https://dera-api-jqko.onrender.com/api/v1/auth/login";
+    const url = "https://dera-api.daraexpress.com/api/v1/auth/login";
 
     const data = {
         email: "john.doe@example.com",
