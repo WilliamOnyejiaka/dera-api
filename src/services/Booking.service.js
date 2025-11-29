@@ -175,14 +175,16 @@ export default class Booking extends BaseService {
 
     async cancel(id) {
         try {
-            const booking = await BookingModel.findById(id)
+            const booking = await BookingModel.findById(id);
+
 
             if (!booking) return this.responseData(404, true, 'Booking not found');
 
             if (booking.status === 'cancelled') return this.responseData(400, true, 'Booking already cancelled');
 
-            booking.status = 'cancelled'
-            booking.updatedAt = new Date()
+            booking.status = 'cancelled';
+            booking.updatedAt = new Date();
+            //refund
             await booking.save()
 
             return this.responseData(200, true, 'Booking cancelled successfully', booking);

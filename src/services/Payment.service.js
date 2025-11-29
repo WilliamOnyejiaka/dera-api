@@ -5,6 +5,7 @@ import { PAYSTACK_SECRET_KEY } from "./../config/env.js";
 import logger from "../config/logger.js";
 import PaymentModel from '../models/payment.model.js';
 import BookingModel from '../models/booking.model.js';
+import bree from "./../config/bree.js";
 
 
 export default class Payment extends BaseService {
@@ -23,7 +24,7 @@ export default class Payment extends BaseService {
                 .populate('userId', 'email')
                 .lean();
 
-            // if (payment && ["pending", "success"].includes(payment.status)) return this.responseData(400, true, "Payment already processing");
+            if (payment && ["pending", "success"].includes(payment.status)) return this.responseData(400, true, "Payment already processing");
 
             const amount = booking.amount * 100;// Convert Naira → Kobo
 
@@ -140,7 +141,7 @@ export default class Payment extends BaseService {
                 completedAt: Date.now(),
                 status: "success"
             });
-            logger.info(`Charge was successful for user:${userId} , booking:${bookingId}`);
+            logger.info(`🤑 Payment was successful for user:${userId} , booking:${bookingId}`);
         } catch (error) {
             logger.error(error);
             const { statusCode, message } = this.handleMongoError(error);
@@ -161,7 +162,19 @@ export default class Payment extends BaseService {
         // Handle events
         switch (event.event) {
             case 'charge.success':
-                await this.successfulCharge(data);
+                const name = `charge-successful-${Date.now()}`;
+
+                await bree.add({
+                    name: name,
+                    path: './src/jobs/charge-successful.js',
+                    worker: {
+                        workerData: { data }
+                    }
+                });
+
+                // Run job once
+                await bree.start(name);
+                // await this.successfulCharge(data);
                 break;
             case 'charge.failed':
                 console.log('Payment failed:', event.data.reference);
