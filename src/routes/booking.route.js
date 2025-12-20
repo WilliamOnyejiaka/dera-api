@@ -6,7 +6,8 @@ import {
   getBooking,
   updateBooking,
   cancelBooking,
-  userBookings
+  userBookings,
+  calculatePrice
 } from '../controllers/booking.controller.js'
 import { authMiddleware } from '../middlewares/authMiddleware.js'
 import asyncHandler from "express-async-handler";
@@ -111,6 +112,27 @@ router.post(
 );
 
 router.get(
+  "/prices",
+  [
+    body('truckSize').isInt() // ensures it's an integer
+      .withMessage('truckSize Must be a number')
+      .isIn([5, 10, 15])
+      .withMessage('truckSize must be 5, 10, or 15'),
+    body(`city`)
+      .exists()
+      .withMessage(`city is required`)
+      .isString()
+      .trim()
+      .custom(value => {
+        if (!allowedCities.includes(value)) {
+          throw new Error(`city must be one of: ${allowedCities.join(', ')}`);
+        }
+        return true;
+      }),
+  ]
+)
+
+router.get(
   '/users/',
   [
     query('page').optional().isInt({ min: 1 }),
@@ -159,6 +181,9 @@ router.patch(
   asyncHandler(updateBooking)
 );
 
-router.patch('/cancel/:id', [param('id').isMongoId()], asyncHandler(cancelBooking))
+router.patch('/cancel/:id', [param('id').isMongoId()], asyncHandler(cancelBooking));
+
+router.get('/prices/:city/:truckSize', asyncHandler(calculatePrice))
+
 
 export default router

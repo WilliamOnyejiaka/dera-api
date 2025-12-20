@@ -23,6 +23,16 @@ const TruckSizeCost = {
 
 export default class Booking extends BaseService {
 
+    calculatePrice(city, truckSize) {
+        const distance = CityKm[city];
+        const costPerKm = TruckSizeCost[truckSize];
+
+        if (!distance) return this.responseData(400, true, "Unknown city");
+        if (!costPerKm) return this.responseData(400, true, "Invalid truck size");
+
+        return this.responseData(200, false, "Price was calculated successfully", { price: distance * costPerKm });
+    }
+
     async getBooking(id) {
         try {
             const booking = await BookingModel.findById(id);

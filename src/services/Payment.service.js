@@ -21,7 +21,6 @@ export default class Payment extends BaseService {
             if (!booking) return this.responseData(404, true, "Booking was not found");
 
             const payment = await PaymentModel.findOne({ bookingId, userId })
-                .populate('userId', 'email')
                 .lean();
 
             if (payment && ["pending", "success"].includes(payment.status)) return this.responseData(400, true, "Payment already processing");

@@ -52,35 +52,35 @@ const logger = winston.createLogger({
         }),
         // File transport without colors
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/error.log'),
+            filename: path.join(__dirname, '../../logs/error.log'),
             level: 'error'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/http.log'),
+            filename: path.join(__dirname, '../../logs/http.log'),
             level: 'http'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/warn.log'),
+            filename: path.join(__dirname, '../../logs/warn.log'),
             level: 'warn'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/info.log'),
+            filename: path.join(__dirname, '../../logs/info.log'),
             level: 'info'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/fatal.log'),
+            filename: path.join(__dirname, '../../logs/fatal.log'),
             level: 'fatal'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/debug.log'),
+            filename: path.join(__dirname, '../../logs/debug.log'),
             level: 'debug'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/trace.log'),
+            filename: path.join(__dirname, '../../logs/trace.log'),
             level: 'trace'
         }),
         new winston.transports.File({
-            filename: path.join(__dirname, '../logs/app.log') // Combined errors
+            filename: path.join(__dirname, '../../logs/app.log') // Combined errors
         }),
     ],
 });

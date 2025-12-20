@@ -49,6 +49,16 @@ export const userBookings = async (req, res) => {
   Controller.response(res, serviceResult);
 }
 
+export const calculatePrice = async (req, res) => {
+  const { id: userId } = res.locals.data;
+  const { city, truckSize } = req.params;
+
+  let size = parseInt(truckSize) || 0;
+
+  const serviceResult = await service.calculatePrice(city, size);
+  Controller.response(res, serviceResult);
+}
+
 
 export const getBooking = async (req, res) => {
   const { id } = req.params
