@@ -57,7 +57,7 @@ export default class Booking extends BaseService {
 
             // const amount = km * cost;
 
-            const amount = 400;
+            const amount = 100;
 
             const booking = await BookingModel.create({
                 ...payload,
@@ -73,6 +73,7 @@ export default class Booking extends BaseService {
                 worker: {
                     workerData: {
                         to: "williamonyejiaka2021@gmail.com",
+                        // to: "bookings@daraexpress.com",
                         subject: "New Booking",
                         body: { booking: { ...booking.toJSON(), createdBy: userId } },
                         templatePath: 'booking.ejs'
