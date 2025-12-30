@@ -55,7 +55,9 @@ export default class Booking extends BaseService {
             const km = CityKm[city];
             const cost = TruckSizeCost[truckSize];
 
-            const amount = km * cost;
+            // const amount = km * cost;
+
+            const amount = 400;
 
             const booking = await BookingModel.create({
                 ...payload,
