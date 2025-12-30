@@ -72,8 +72,8 @@ export default class Booking extends BaseService {
                 path: './src/jobs/send-email.js',
                 worker: {
                     workerData: {
-                        to: "williamonyejiaka2021@gmail.com",
-                        // to: "bookings@daraexpress.com",
+                        // to: "williamonyejiaka2021@gmail.com",
+                        to: "kelvin@daraexpress.com",
                         subject: "New Booking",
                         body: { booking: { ...booking.toJSON(), createdBy: userId } },
                         templatePath: 'booking.ejs'
